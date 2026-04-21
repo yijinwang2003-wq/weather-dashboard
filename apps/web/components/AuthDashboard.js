@@ -8,9 +8,13 @@ export default function AuthDashboard() {
   const router = useRouter();
   const [allowed, setAllowed] = useState(false);
   const [checkingAccess, setCheckingAccess] = useState(true);
+  const [hasChecked, setHasChecked] = useState(false);
+  const [hasRedirected, setHasRedirected] = useState(false);
   const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
+    if (hasChecked) return;
+
     try {
       if (localStorage.getItem("loggedIn") === "true") {
         setAllowed(true);
@@ -19,15 +23,19 @@ export default function AuthDashboard() {
       setAuthError("Login check failed. Falling back to demo user.");
       setAllowed(true);
     } finally {
+      setHasChecked(true);
       setCheckingAccess(false);
     }
-  }, []);
+  }, [hasChecked]);
 
   useEffect(() => {
-    if (!checkingAccess && !allowed) {
+    if (!hasChecked || checkingAccess || hasRedirected) return;
+
+    if (!allowed) {
+      setHasRedirected(true);
       router.replace("/login");
     }
-  }, [checkingAccess, allowed, router]);
+  }, [checkingAccess, allowed, hasChecked, hasRedirected, router]);
 
   function handleSignOut() {
     try {

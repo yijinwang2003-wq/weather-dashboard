@@ -7,24 +7,32 @@ export default function Login() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [checkingLogin, setCheckingLogin] = useState(true);
+  const [hasChecked, setHasChecked] = useState(false);
   const [authError, setAuthError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [hasRedirected, setHasRedirected] = useState(false);
 
   useEffect(() => {
+    if (hasChecked) return;
+
     try {
       setIsLoggedIn(localStorage.getItem("loggedIn") === "true");
     } catch (error) {
       setAuthError("Could not read login state. You can still continue in demo mode.");
     } finally {
+      setHasChecked(true);
       setCheckingLogin(false);
     }
-  }, []);
+  }, [hasChecked]);
 
   useEffect(() => {
-    if (!checkingLogin && isLoggedIn) {
+    if (!hasChecked || checkingLogin || hasRedirected) return;
+
+    if (isLoggedIn) {
+      setHasRedirected(true);
       router.replace("/");
     }
-  }, [checkingLogin, isLoggedIn, router]);
+  }, [checkingLogin, hasChecked, hasRedirected, isLoggedIn, router]);
 
   function handleSignIn() {
     setLoading(true);
@@ -37,6 +45,7 @@ export default function Login() {
     }
 
     setIsLoggedIn(true);
+    setHasRedirected(true);
     router.push("/");
   }
 
