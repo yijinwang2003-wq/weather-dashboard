@@ -1,0 +1,15 @@
+{
+  "name": "weather-dashboard",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm run dev --prefix apps/web",
+    "build": "npm run build --prefix apps/web",
+    "start": "npm start --prefix apps/web",
+    "worker": "npm start --prefix apps/worker"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
