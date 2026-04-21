@@ -17,6 +17,9 @@ export default function LoginPage() {
       <button onClick={handleLogin} disabled={loading}>
         {loading ? "Logging in..." : "Login"}
       </button>
+      <div style={{ marginTop: 20 }}>
+        <a href="/">Back to home</a>
+      </div>
     </div>
   );
 }

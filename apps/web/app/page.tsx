@@ -6,6 +6,7 @@ import WeatherDashboard from "../components/WeatherDashboard";
 export default function HomePage() {
   const [ready, setReady] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("loggedIn") === "true";
@@ -13,22 +14,29 @@ export default function HomePage() {
     setReady(true);
   }, []);
 
+  function handleLogin() {
+    setLoading(true);
+    localStorage.setItem("loggedIn", "true");
+    setLoggedIn(true);
+    setLoading(false);
+  }
+
   function handleLogout() {
     localStorage.removeItem("loggedIn");
-    window.location.href = "/login";
+    setLoggedIn(false);
   }
 
   if (!ready) {
-    return (
-      <div style={{ padding: 50 }}>Loading...</div>
-    );
+    return <div style={{ padding: 50 }}>Loading...</div>;
   }
 
   if (!loggedIn) {
     return (
       <div style={{ padding: 50 }}>
-        <h1>Not logged in</h1>
-        <a href="/login">Go to login</a>
+        <h1>Login</h1>
+        <button onClick={handleLogin} disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
       </div>
     );
   }
