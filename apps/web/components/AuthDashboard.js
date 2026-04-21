@@ -14,18 +14,20 @@ export default function AuthDashboard() {
     try {
       if (localStorage.getItem("loggedIn") === "true") {
         setAllowed(true);
-        return;
       }
     } catch (error) {
       setAuthError("Login check failed. Falling back to demo user.");
       setAllowed(true);
-      return;
     } finally {
       setCheckingAccess(false);
     }
+  }, []);
 
-    router.replace("/login");
-  }, [router]);
+  useEffect(() => {
+    if (!checkingAccess && !allowed) {
+      router.replace("/login");
+    }
+  }, [checkingAccess, allowed, router]);
 
   function handleSignOut() {
     try {

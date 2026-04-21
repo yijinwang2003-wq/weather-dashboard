@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import AuthDashboard from "../components/AuthDashboard";
 
 export default function HomePage() {
-  redirect("/login");
+  return <AuthDashboard />;
 }

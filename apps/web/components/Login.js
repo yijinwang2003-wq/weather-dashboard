@@ -8,19 +8,23 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [checkingLogin, setCheckingLogin] = useState(true);
   const [authError, setAuthError] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     try {
-      if (localStorage.getItem("loggedIn") === "true") {
-        router.replace("/");
-        return;
-      }
+      setIsLoggedIn(localStorage.getItem("loggedIn") === "true");
     } catch (error) {
       setAuthError("Could not read login state. You can still continue in demo mode.");
     } finally {
       setCheckingLogin(false);
     }
-  }, [router]);
+  }, []);
+
+  useEffect(() => {
+    if (!checkingLogin && isLoggedIn) {
+      router.replace("/");
+    }
+  }, [checkingLogin, isLoggedIn, router]);
 
   function handleSignIn() {
     setLoading(true);
@@ -32,6 +36,7 @@ export default function Login() {
       setAuthError("Could not save login state, but demo mode is enabled for now.");
     }
 
+    setIsLoggedIn(true);
     router.push("/");
   }
 
