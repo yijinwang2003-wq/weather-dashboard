@@ -9,9 +9,12 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-    setLoggedIn(isLoggedIn);
-    setReady(true);
+    try {
+      const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+      setLoggedIn(isLoggedIn);
+    } finally {
+      setReady(true);
+    }
   }, []);
 
   function handleLogin() {
@@ -27,7 +30,7 @@ export default function HomePage() {
   }
 
   if (!ready) {
-    return <div style={{ padding: 50 }}>Loading...</div>;
+    return null;
   }
 
   if (!loggedIn) {
