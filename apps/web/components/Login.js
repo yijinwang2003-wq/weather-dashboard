@@ -7,19 +7,31 @@ export default function Login() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [checkingLogin, setCheckingLogin] = useState(true);
+  const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
-    if (localStorage.getItem("loggedIn") === "true") {
-      router.replace("/");
-      return;
+    try {
+      if (localStorage.getItem("loggedIn") === "true") {
+        router.replace("/");
+        return;
+      }
+    } catch (error) {
+      setAuthError("Could not read login state. You can still continue in demo mode.");
+    } finally {
+      setCheckingLogin(false);
     }
-
-    setCheckingLogin(false);
   }, [router]);
 
   function handleSignIn() {
     setLoading(true);
-    localStorage.setItem("loggedIn", "true");
+    setAuthError(null);
+
+    try {
+      localStorage.setItem("loggedIn", "true");
+    } catch (error) {
+      setAuthError("Could not save login state, but demo mode is enabled for now.");
+    }
+
     router.push("/");
   }
 
@@ -49,6 +61,12 @@ export default function Login() {
         </div>
 
         <div className="space-y-5">
+          {authError ? (
+            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+              {authError}
+            </div>
+          ) : null}
+
           <button
             type="button"
             onClick={handleSignIn}
@@ -56,6 +74,14 @@ export default function Login() {
             className="w-full rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-[0_16px_40px_rgba(15,23,42,0.18)] transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? "Signing in..." : "Sign in"}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleSignIn}
+            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-[0_12px_30px_rgba(15,23,42,0.08)] transition hover:border-slate-300 hover:bg-slate-50"
+          >
+            Continue as demo user
           </button>
         </div>
       </div>

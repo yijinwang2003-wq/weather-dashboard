@@ -7,22 +7,36 @@ import WeatherDashboard from "./WeatherDashboard";
 export default function AuthDashboard() {
   const router = useRouter();
   const [allowed, setAllowed] = useState(false);
+  const [checkingAccess, setCheckingAccess] = useState(true);
+  const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
-    if (localStorage.getItem("loggedIn") === "true") {
+    try {
+      if (localStorage.getItem("loggedIn") === "true") {
+        setAllowed(true);
+        return;
+      }
+    } catch (error) {
+      setAuthError("Login check failed. Falling back to demo user.");
       setAllowed(true);
       return;
+    } finally {
+      setCheckingAccess(false);
     }
 
     router.replace("/login");
   }, [router]);
 
   function handleSignOut() {
-    localStorage.removeItem("loggedIn");
+    try {
+      localStorage.removeItem("loggedIn");
+    } catch (error) {
+      setAuthError("Could not clear login state. Redirecting to login anyway.");
+    }
     router.push("/login");
   }
 
-  if (!allowed) {
+  if (checkingAccess || !allowed) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.95),_rgba(241,245,249,0.92)_38%,_rgba(226,232,240,0.96)_100%)] px-4 py-10">
         <div className="rounded-[28px] border border-white/70 bg-white/80 px-6 py-4 text-sm font-medium text-slate-600 shadow-[0_20px_60px_rgba(15,23,42,0.1)] backdrop-blur-xl">
@@ -41,6 +55,9 @@ export default function AuthDashboard() {
               Demo Session
             </p>
             <p className="mt-2 text-sm text-slate-700">Logged in with localStorage</p>
+            {authError ? (
+              <p className="mt-2 text-sm text-amber-700">{authError}</p>
+            ) : null}
           </div>
 
           <button
